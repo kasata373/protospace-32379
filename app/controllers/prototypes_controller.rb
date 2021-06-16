@@ -31,9 +31,12 @@ class PrototypesController < ApplicationController
   end
 
   def update
-    prototype = Prototype.find(params[:id])
-    prototype.update(set_prototype)
-    redirect_to prototype_path
+    @prototype = Prototype.find(params[:id])
+    if @prototype.update(set_prototype)
+      redirect_to prototype_path
+    else
+      render :edit
+    end
   end
 
   def destroy
@@ -49,6 +52,12 @@ class PrototypesController < ApplicationController
 
   def set_prototype
     params.require(:prototype).permit(:title, :image, :catch_copy, :concept).merge(user_id: current_user.id)
+  end
+
+  def basic_auth
+    authenticate_or_request_with_http_basic do |username, password|
+      username == ENV["BASIC_AUTH_USER"] && password == ENV["BASIC_AUTH_PASSWORD"]
+    end
   end
 
   def move_to_index
