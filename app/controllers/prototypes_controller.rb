@@ -1,6 +1,7 @@
 class PrototypesController < ApplicationController
+  before_action :authenticate_user!, except: [:show, :index]
   before_action :move_to_index, except:[:index, :new, :show, :create, :edit, :update, :destroy]
-
+  
   def index
     @user = User.all
     @prototypes = Prototype.all
@@ -54,11 +55,11 @@ class PrototypesController < ApplicationController
     params.require(:prototype).permit(:title, :image, :catch_copy, :concept).merge(user_id: current_user.id)
   end
 
-  def basic_auth
-    authenticate_or_request_with_http_basic do |username, password|
-      username == ENV["BASIC_AUTH_USER"] && password == ENV["BASIC_AUTH_PASSWORD"]
-    end
-  end
+  # def basic_auth
+    # authenticate_or_request_with_http_basic do |username, password|
+      # username == ENV["BASIC_AUTH_USER"] && password == ENV["BASIC_AUTH_PASSWORD"]
+    # end
+  # end
 
   def move_to_index
     unless user_signed_in?
